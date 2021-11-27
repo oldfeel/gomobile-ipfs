@@ -49,6 +49,7 @@ final class FetchRandomXKCD extends AsyncTask<Void, Void, String> {
         try {
             if (XKCDLatest == -1) {
                 String address = String.format("%s/latest/info.json", XKCDIPNS);
+                Log.d(TAG, "doInBackground: 1 " + address);
                 byte[] latestRaw = ipfs.newRequest("cat")
                     .withArgument(address)
                     .send();
@@ -59,6 +60,7 @@ final class FetchRandomXKCD extends AsyncTask<Void, Void, String> {
             int randomIndex = random.nextInt(XKCDLatest) + 1;
             String formattedIndex = String.format("%04d", randomIndex);
 
+            Log.d(TAG, "doInBackground: 2 " + String.format("%s/%s/info.json", XKCDIPNS, formattedIndex));
             byte[] infoRaw = ipfs.newRequest("cat")
                 .withArgument(String.format("%s/%s/info.json", XKCDIPNS, formattedIndex))
                 .send();
@@ -70,6 +72,7 @@ final class FetchRandomXKCD extends AsyncTask<Void, Void, String> {
             String[] imgURLSplit = imgURL.split("\\.");
             String imgExt = imgURLSplit[imgURLSplit.length - 1].contains("png") ? "png" : "jpg";
 
+            Log.d(TAG, "doInBackground: 3 " + String.format("%s/%s/image.%s", XKCDIPNS, formattedIndex, imgExt));
             fetchedData = ipfs.newRequest("cat")
                 .withArgument(String.format("%s/%s/image.%s", XKCDIPNS, formattedIndex, imgExt))
                 .send();

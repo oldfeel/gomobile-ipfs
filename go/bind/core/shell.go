@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"context"
 	"io/ioutil"
 	"strings"
@@ -26,6 +27,33 @@ func (s *Shell) NewRequest(command string) *RequestBuilder {
 	}
 }
 
+func (s *Shell) Add(data []byte) (string, error) {
+	return s.ishell.Add(bytes.NewReader(data))
+}
+
+type SubListener interface {
+	OnListener(data string)
+}
+
+func (s *Shell) PubSubSubscribe(topic string, subListener SubListener) {
+	go func() {
+		pss, err := s.ishell.PubSubSubscribe(topic)
+		if err != nil {
+			subListener.OnListener(err.Error())
+			return
+		}
+
+		for {
+			msg, err := pss.Next()
+			if err != nil {
+				subListener.OnListener(err.Error())
+				continue
+			}
+			subListener.OnListener(string(msg.Data))
+		}
+	}()
+}
+
 type RequestBuilder struct {
 	rb *ipfs_api.RequestBuilder
 }
@@ -43,6 +71,23 @@ func (req *RequestBuilder) Send() ([]byte, error) {
 
 	return ioutil.ReadAll(res.Output)
 }
+
+// func (req *RequestBuilder) Add(data []byte) (string, error) {
+// 	fr := files.NewReaderFile(bytes.NewReader(data))
+// 	slf := files.NewSliceDirectory([]files.DirEntry{files.FileEntry("", fr)})
+// 	fileReader := files.NewMultiFileReader(slf, true)
+
+// 	req.rb.Body(fileReader)
+// 	type object struct {
+// 		Hash string
+// 	}
+// 	var out object
+// 	err := req.rb.Exec(context.Background(), &out)
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	return out.Hash, nil
+// }
 
 func (req *RequestBuilder) Argument(arg string) {
 	req.rb.Arguments(arg)
