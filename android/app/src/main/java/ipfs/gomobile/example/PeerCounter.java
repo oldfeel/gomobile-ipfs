@@ -59,7 +59,7 @@ final class PeerCounter {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    activity.updatePeerCount(count);
+//                    activity.updatePeerCount(count);
                 }
             });
         } catch (JSONException err) {

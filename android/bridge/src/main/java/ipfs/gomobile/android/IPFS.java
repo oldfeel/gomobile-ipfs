@@ -17,6 +17,7 @@ import core.Repo;
 import core.Node;
 import core.Shell;
 import core.SockManager;
+import core.SubListener;
 
 /**
  * IPFS is a class that wraps a go-ipfs node and its shell over UDS.
@@ -313,11 +314,16 @@ public class IPFS {
     }
 
     public interface SubListener {
-        void onPub(String data);
+        void onListener(String var1);
     }
 
-    public void pubSubSubscribe(String topic, SubListener subListener) {
-        shell.pubSubSubscribe(topic, subListener);
+    public void pubSubSubscribe(String topic, final SubListener subListener) {
+        shell.pubSubSubscribe(topic, new core.SubListener() {
+            @Override
+            public void onListener(String s) {
+                subListener.onListener(s);
+            }
+        });
     }
 
     /**

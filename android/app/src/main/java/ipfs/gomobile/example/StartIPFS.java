@@ -57,7 +57,7 @@ final class StartIPFS extends AsyncTask<Void, Void, String> {
         if (activity == null || activity.isFinishing()) return;
 
         if (backgroundError) {
-            activity.displayPeerIDError(result);
+//            activity.displayPeerIDError(result);
             Log.e(TAG, "IPFS start error: " + result);
         } else {
             activity.displayPeerIDResult(result);

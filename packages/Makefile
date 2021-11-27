@@ -92,6 +92,14 @@ help:
 		| grep -v / \
 		| sed 's/^/	$(HELP_MSG_PREFIX)make /'
 
+# 打包 android aar
+build_android: $(ANDROID_BUILD_DIR_INT_CORE) $(GO_SRC) $(GO_MOD_FILES) | $(GOMOBILE)
+	@echo '------------------------------------'
+	@echo '   Android Core: Gomobile binding   '
+	@echo '------------------------------------'
+	$(GOMOBILE) bind -v $(GOMOBILE_OPT) -target=android$(GOMOBILE_TARGET) -o $(ANDROID_CORE) $(CORE_PACKAGE) $(EXT_PACKAGE)
+	@echo 'Done!'
+
 # Build rules
 build_core: build_core.android build_core.ios
 
