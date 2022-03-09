@@ -3,11 +3,19 @@ package core
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
+	"io"
 	"io/ioutil"
 	"strings"
 
 	ipfs_api "github.com/ipfs/go-ipfs-api"
+	files "github.com/ipfs/go-ipfs-files"
 )
+
+type object struct {
+	Hash string
+}
 
 type Shell struct {
 	ishell *ipfs_api.Shell
@@ -28,6 +36,48 @@ func (s *Shell) NewRequest(command string) *RequestBuilder {
 }
 
 func (s *Shell) Add(data []byte) (string, error) {
+	return s.ishell.Add(bytes.NewReader(data))
+}
+
+//  -w, --wrap-with-directory  bool   - Wrap files with a directory object.
+func (s *Shell) AddW(data []byte, name string) (string, error) {
+	fr := files.NewReaderFile(bytes.NewReader(data))
+	slf := files.NewSliceDirectory([]files.DirEntry{files.FileEntry(name, fr)})
+	fileReader := files.NewMultiFileReader(slf, true)
+
+	resp, err := s.ishell.Request("add").
+		Option("wrap-with-directory", true).
+		Body(fileReader).
+		Send(context.Background())
+	if err != nil {
+		return "", nil
+	}
+
+	defer resp.Close()
+
+	if resp.Error != nil {
+		return "", resp.Error
+	}
+
+	dec := json.NewDecoder(resp.Output)
+	var final string
+	for {
+		var out object
+		err = dec.Decode(&out)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return "", err
+		}
+		final = out.Hash
+	}
+
+	if final == "" {
+		return "", errors.New("no results received")
+	}
+
+	return final, nil
 	return s.ishell.Add(bytes.NewReader(data))
 }
 

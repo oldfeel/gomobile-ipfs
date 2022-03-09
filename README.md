@@ -1,3 +1,10 @@
+# 打包 AAR
+
+````
+cd packages
+./build.sh
+````
+
 # gomobile-ipfs
 
 This repo aims to provide packages for Android, iOS and React-Native that
