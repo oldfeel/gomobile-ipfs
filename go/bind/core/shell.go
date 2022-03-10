@@ -50,7 +50,7 @@ func (s *Shell) AddW(data []byte, name string) (string, error) {
 		Body(fileReader).
 		Send(context.Background())
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	defer resp.Close()
@@ -78,7 +78,6 @@ func (s *Shell) AddW(data []byte, name string) (string, error) {
 	}
 
 	return final, nil
-	return s.ishell.Add(bytes.NewReader(data))
 }
 
 type SubListener interface {
