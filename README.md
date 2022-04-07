@@ -1,7 +1,7 @@
 # 打包 AAR
 
 ````
-cd packages
+cd go
 ./build.sh
 ````
 

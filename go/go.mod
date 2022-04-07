@@ -3,6 +3,8 @@ module github.com/ipfs-shipyard/gomobile-ipfs/go
 go 1.16
 
 require (
+	github.com/astaxie/beego v1.12.3
+	github.com/beego/beego/v2 v2.0.2
 	github.com/ipfs/go-datastore v0.4.5
 	github.com/ipfs/go-ipfs v0.7.0
 	github.com/ipfs/go-ipfs-api v0.2.0

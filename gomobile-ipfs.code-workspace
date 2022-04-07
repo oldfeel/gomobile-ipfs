@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "go"
+		},
+		{
+			"path": "android"
+		},
+		{
+			"path": "packages"
+		}
+	],
+	"settings": {}
+}
